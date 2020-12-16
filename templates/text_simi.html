@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="jumbotron text-center" style="height: 22%;">
+    <h1>Text Similarity</h1> 
+    <p class="lead">Brief description of whats going on</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Input dropdown -->
+        <div class="col-sm">
+            <form method="POST" action="/text_simi">
+                <div class="dropdown dropright">
+                    <label for="dropdown">Select files from input folder:</label>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{selected_file}} </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for filename in check_names %}
+                            <button class="dropdown-item" name="file_selector" type="submit" value={{filename}}>{{filename}}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Matches dropdown -->
+        <div class="col-sm">
+            <form method="POST" action="/text_simi">
+                <div class="dropdown dropright">
+                    <label for="dropdown">Select match file: </label>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{selected_sample}} </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for filename in sample_names %}
+                            <button class="dropdown-item" name="sample_selector" type="submit" value={{filename}}>{{filename}}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </form>
+        </div>  
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                <label for="input_text_area">Checked text: </label>
+                <textarea class="form-control" style="height: 50vh;" id="input_text_area">{{file_text}}</textarea>
+            </div>
+        </div>
+        <div class="col-sm">
+            <label for="accordionExample">Closest matches from database: </label>
+            <div class="accordion" id="accordionExample">
+                {% for file in file_matches %}
+                    <div class="card">
+                        <div class="card-header" id="heading_{{ loop.index }}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_{{ loop.index }}" aria-expanded="false" aria-controls="collapse_{{ loop.index }}">
+                                    {{ file[1] }} With a % of: {{ file[0] }}
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapse_{{ loop.index }}" class="collapse" aria-labelledby="heading_{{ loop.index }}" data-parent="#accordionExample">
+                            <div class="card-body">
+                                {{ file[2] }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <button type="button" class="btn btn-warning">Search</button>
+    </div>
+</div>
+
+{% endblock %}
