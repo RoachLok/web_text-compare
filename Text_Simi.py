@@ -21,6 +21,7 @@ from nltk.tokenize import word_tokenize
 
 """ Processing of sample texts """ # Gets corpus in the same manner as for texts to check.
 def sample_corpus_from_path(sample_paths = sample_paths):
+    print("----- GENERATING CORPUS FOR SAMPLE DOCS -----")
     clean_tokenized_texts = []
 
     for sample_path in sample_paths:

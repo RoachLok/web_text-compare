@@ -55,3 +55,5 @@ def getMatchesText(file_text, samples_corpus):
         file_name = get_filenames_from_paths(str(matches[i][1]), multiple = False)
         matches_text.append([matches[i][0], file_name, get_text_from_file_name(file_name, False)])
     return matches_text
+
+Samples_Corpus = sample_corpus_from_path(Sample_texts())   
