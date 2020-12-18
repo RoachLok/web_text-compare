@@ -57,8 +57,6 @@ def corpus_from_dictionary(tk_dictionary, clean_tokenized_texts):
 
 # Texts to check for similarity
 def getMatches(text, samples_corpus):
-    samples_corpus = sample_corpus_from_path(sample_paths)
-
     lemmatizer = WordNetLemmatizer()
     lemmatized = []
     for sentence in nltk.sent_tokenize(text):
