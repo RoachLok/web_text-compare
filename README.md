@@ -6,4 +6,4 @@ For now it only has text-comparisson for plagiarism detection. Generates a dicti
 ![Desktop-ss](desktop.png)
 
 ## - Phone
-![Phone-ss](phone.jpg)
+<img src="phone.jpg" alt="Phone-ss" width="415"/>
