@@ -1,0 +1,47 @@
+<div id="matches-container">
+    <div class="dropdown dropright">
+        <label for="dropdown">Select match file: </label>
+        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Archivos 
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <div class="list-group" id="list-tab" role="tablist">
+                {% for file in file_matches %}
+                    {% if loop.index == 1 %}    
+                        <button class="dropdown-item active" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
+                            {% if file[0] > 100 %}
+                                Text {{ file[1] }} similarity 99.99%
+                            {% else %}
+                                Text {{ file[1] }} similarity {{ file[0] }}% 
+                            {% endif %}
+                        </button>
+                    {% else %}
+                        <button class="dropdown-item border-top border-info" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
+                            {% if file[0] > 100 %}
+                                Text {{ file[1] }} similarity 99.99%
+                            {% else %}
+                                Text {{ file[1] }} similarity {{ file[0] }}% 
+                            {% endif %}
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Matches Text-Area -->
+    <label for="matches-tabContent">Closest matches from database: </label>
+    <div class="tab-content" id="matches-tabContent">
+        {% for file in file_matches %}
+            {% if loop.index == 1 %}
+                <div class="tab-pane fade show active" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
+                    <textarea class="form-control" style="height: 61vh;" readonly>{{ file[2] }}</textarea>
+                </div>
+            {% else %}
+                <div class="tab-pane fade" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
+                    <textarea class="form-control" style="height: 61vh;" readonly>{{ file[2] }}</textarea>
+                </div>
+            {% endif %}
+        {% endfor %} 
+    </div>
+</div>

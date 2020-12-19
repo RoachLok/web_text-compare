@@ -1,91 +1,132 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="jumbotron text-center" style="height: 22%;">
-    <h1>Text Similarity</h1> 
+<div class="jumbotron text-center" style="height: 20%;">
+    <h1 style="margin-top: -0.5em;">Text Similarity</h1> 
     <p class="lead">Brief description of whats going on</p>
 </div>
 
 <div class="container">
     <div class="row">
-        <!-- Input dropdown -->
-        <div class="col-sm">
-            <form method="POST" action="/text_simi">
-                <div class="dropdown dropright">
-                    <label for="dropdown">Select files from input folder:</label>
-                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{selected_file}} </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        {% for filename in check_names %}
-                            <button class="dropdown-item" name="file_selector" type="submit" value={{filename}}>{{filename}}</button>
-                        {% endfor %}
-                    </div>
-                </div>
-            </form>
-        </div>
-        <!-- Matches dropdown -->
-        <div class="col-sm">
+        <div class="col-sm" style="margin-left: -2%;">
+            <!-- Input dropdown -->
             <div class="dropdown dropright">
-                <label for="dropdown">Select match file: </label>
-                <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Archivos 
+                <label for="dropdown">Select files from input folder:</label>
+                <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Files to Check
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <div class="list-group" id="list-tab" role="tablist">
-                        {% for file in file_matches %}
+                        {% for filename in check_names %}
                             {% if loop.index == 1 %}    
-                                <a class="list-group-item list-group-item-action dropdown-item active" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
-                                    {% if file[0] > 100 %}
-                                        Text {{ file[1] }} similarity 99.99%
-                                    {% else %}
-                                        Text {{ file[1] }} similarity {{ file[0] }}% 
-                                    {% endif %}
-                                </a>
+                                <button class="dropdown-item active" onclick="getMatchesOf('{{filename}}')" id="check-list-item-{{ loop.index }}" data-toggle="list" href="#check-item-{{ loop.index }}" role="tab" aria-controls="checks-controls-{{ loop.index }}">
+                                    {{ filename }}
+                                </button>
                             {% else %}
-                                <a class="list-group-item list-group-item-action dropdown-item" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
-                                    {% if file[0] > 100 %}
-                                        Text {{ file[1] }} similarity 99.99%
-                                    {% else %}
-                                        Text {{ file[1] }} similarity {{ file[0] }}% 
-                                    {% endif %}
-                                </a>
+                                <button class="dropdown-item border-top border-info" onclick="getMatchesOf('{{filename}}')" id="check-list-item{{ loop.index }}" data-toggle="list" href="#check-item-{{ loop.index }}" role="tab" aria-controls="checks-controls-{{ loop.index }}">
+                                    {{ filename }}
+                                </button>
                             {% endif %}
                         {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-sm">
+            <!-- Text to be compared Text-Area -->
             <div class="form-group">
-                <label for="check_text_area">Checked text: </label>
-                <textarea class="form-control" style="height: 59vh;" id="check_text_area">{{file_text}}</textarea>
+                <label for="checks-tabContent">Text to Compare: </label>
+                <div class="tab-content" id="checks-tabContent">
+                    {% for file_text in file_texts %}
+                        {% if loop.index == 1 %}
+                            <div class="tab-pane fade show active" id="check-item-{{ loop.index }}" role="tabpanel" aria-labelledby="check-list-item{{ loop.index }}">
+                                <textarea class="form-control" style="height: 61vh;" id="check_text_area">{{file_text}}</textarea>
+                            </div>
+                        {% else %}
+                            <div class="tab-pane fade" id="check-item-{{ loop.index }}" role="tabpanel" aria-labelledby="check-list-item{{ loop.index }}">
+                                <textarea class="form-control" style="height: 61vh;" id="check_text_area">{{file_text}}</textarea>
+                            </div>
+                        {% endif %}
+                    {% endfor %} 
+                </div>
             </div>
         </div>
-        
-        <div class="col-sm">
-            <label>Closest matches from database: </label>
-            <div class="tab-content" id="nav-tabContent">
-                {% for file in file_matches %}
-                    {% if loop.index == 1 %}
-                        <div class="tab-pane fade show active" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
-                            <textarea class="form-control" style="height: 59vh;" readonly>{{ file[2] }}</textarea>
-                        </div>
-                    {% else %}
-                        <div class="tab-pane fade" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
-                            <textarea class="form-control" style="height: 59vh;" readonly>{{ file[2] }}</textarea>
-                        </div>
-                    {% endif %}
-                {% endfor %} 
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <button type="button" class="btn btn-warning">Search</button>
+        
+        <!-- Matches Container -->
+        <div class="col-sm" style="margin-right: -2%;">
+            <div id="matches-container">
+                <div class="dropdown dropright">
+                    <label for="dropdown">Select match file: </label>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Archivos 
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div class="list-group" id="list-tab" role="tablist">
+                            {% for file in file_matches %}
+                                {% if loop.index == 1 %}    
+                                    <button class="dropdown-item active" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
+                                        {% if file[0] > 100 %}
+                                            Text {{ file[1] }} similarity 99.99%
+                                        {% else %}
+                                            Text {{ file[1] }} similarity {{ file[0] }}% 
+                                        {% endif %}
+                                    </button>
+                                {% else %}
+                                    <button class="dropdown-item border-top border-info" id="list-{{ loop.index }}-list" data-toggle="list" href="#list-{{ loop.index }}" role="tab" aria-controls="controls-{{ loop.index }}">
+                                        {% if file[0] > 100 %}
+                                            Text {{ file[1] }} similarity 99.99%
+                                        {% else %}
+                                            Text {{ file[1] }} similarity {{ file[0] }}% 
+                                        {% endif %}
+                                    </button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Matches Text-Area -->
+                <label for="matches-tabContent">Closest matches from database: </label>
+                <div class="tab-content" id="matches-tabContent">
+                    {% for file in file_matches %}
+                        {% if loop.index == 1 %}
+                            <div class="tab-pane fade show active" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
+                                <textarea class="form-control" style="height: 61vh;" readonly>{{ file[2] }}</textarea>
+                            </div>
+                        {% else %}
+                            <div class="tab-pane fade" id="list-{{ loop.index }}" role="tabpanel" aria-labelledby="list-{{ loop.index }}-list">
+                                <textarea class="form-control" style="height: 61vh;" readonly>{{ file[2] }}</textarea>
+                            </div>
+                        {% endif %}
+                    {% endfor %} 
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+
+
+<!-- Script for getting matches and setting new -->
+<script>
+    function getMatchesOf(filename) {
+        // Create a request variable and assign a new XMLHttpRequest object to it.
+        const request = new XMLHttpRequest();
+
+        // Open a new connection, using the GET request on the URL endpoint
+        request.open('GET', './local_corpus_match/' + filename, true);
+
+        request.onload = function () {
+            const form_matches = document.createElement("match-element");
+            form_matches.innerHTML = this.response;            
+            const matches_container = document.getElementById("matches-container");
+            matches_container.replaceWith(form_matches);
+        }
+
+        // Send request
+        request.send();
+    }
+</script>
 
 {% endblock %}
